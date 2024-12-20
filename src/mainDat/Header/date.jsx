@@ -6,7 +6,7 @@ export default function Date() {
   let date = useContext(HabitContext);
   let mainDate = date.date;
   return (
-    <div className={css.mainHolder}>
+    <div className={css.selectHolder}>
       <p>Date:</p>
       <input type="date" ref={mainDate} />
     </div>

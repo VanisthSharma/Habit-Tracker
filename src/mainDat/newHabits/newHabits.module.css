@@ -1,4 +1,6 @@
-.newHolder {
+.newHolder,
+.editHolder {
+  margin-bottom: 2rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -12,7 +14,7 @@
   p {
     background-color: #1e1e1e;
     font-size: 1.25rem;
-    padding: 1rem 0.5rem 1rem 0.5rem;
+    padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     text-align: center;
     width: 10rem;
@@ -42,7 +44,7 @@
   button {
     font-size: 1.25rem;
     width: 4rem;
-    padding: 1rem 0.5rem 1rem 0.5rem;
+    padding: 1rem 0.5rem;
     border: 0;
     border-radius: 0.5rem;
     color: white;
@@ -68,5 +70,28 @@
   }
   to {
     transform: translateY(0);
+  }
+}
+@media screen and (max-width: 768px) {
+  .newHolder input,
+  .newHolder p,
+  .editHolder input,
+  .editHolder p {
+    font-size: 1rem;
+    padding: 0.75rem 0.4rem;
+    width: 8rem;
+  }
+  .newHolder input:nth-child(1),
+  .editHolder input:nth-child(1) {
+    width: 10rem;
+  }
+}
+@media screen and (max-width: 540px) {
+  .editHolder {
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: #303030;
+    outline: 0;
+    border: 0;
   }
 }

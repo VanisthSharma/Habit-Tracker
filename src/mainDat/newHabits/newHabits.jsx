@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import { HabitContext } from "../../store/habitContext";
 import css from "./newHabits.module.css";
 import { MdDelete } from "react-icons/md";
@@ -16,33 +16,48 @@ function reduceEdit(state, action) {
   return state;
 }
 
+function reduceArr(state, action) {
+  switch (action.type) {
+    case "UPDATE":
+      return action.payload.habitArr;
+    case "EDIT_HABIT":
+      return state.map((habit, idx) =>
+        idx === action.payload.idx
+          ? { ...habit, [action.payload.field]: action.payload.value }
+          : habit
+      );
+    default:
+      return state;
+  }
+}
+
 export default function NewHabits() {
   const CTX = useContext(HabitContext);
   const DelFunc = CTX.DelFunc;
   const habitArr = CTX.habitArr;
   const [editing, dispatchEditing] = useReducer(reduceEdit, []);
-  const [localHabits, setLocalHabits] = useState(habitArr);
+  const [localHabits, dispatchLocalHabits] = useReducer(reduceArr, habitArr);
 
   useEffect(() => {
-    setLocalHabits(habitArr);
+    dispatchLocalHabits({ type: "UPDATE", payload: { habitArr } });
   }, [habitArr]);
 
   const handleChange = (e, idx, field) => {
-    setLocalHabits((prev) => {
-      const newHabits = [...prev];
-      newHabits[idx][field] = e.target.value;
-      return newHabits;
+    dispatchLocalHabits({
+      type: "EDIT_HABIT",
+      payload: {
+        idx,
+        field,
+        value: e.target.value,
+      },
     });
   };
 
   const renewEdit = (idx) => {
-    const newObj = {
+    dispatchEditing({
       type: "RENEW_ITEM",
-      payload: {
-        idx,
-      },
-    };
-    dispatchEditing(newObj);
+      payload: { idx },
+    });
   };
 
   return (
@@ -50,7 +65,7 @@ export default function NewHabits() {
       {localHabits.length > 0 ? (
         localHabits.map((x, idx) =>
           editing.includes(idx) ? (
-            <div key={idx} className={css.newHolder}>
+            <div key={idx} className={css.editHolder}>
               <input
                 type="text"
                 placeholder="Enter Habit Name"
@@ -73,12 +88,14 @@ export default function NewHabits() {
                 value={x.ToTime}
                 onChange={(e) => handleChange(e, idx, "ToTime")}
               />
-              <button onClick={() => renewEdit(idx)} className={css.editBtn}>
-                <FaSave />
-              </button>
-              <button className={css.delBtn} onClick={() => DelFunc(idx)}>
-                <MdDelete />
-              </button>
+              <div className={css.newHolder}>
+                <button onClick={() => renewEdit(idx)} className={css.editBtn}>
+                  <FaSave />
+                </button>
+                <button className={css.delBtn} onClick={() => DelFunc(idx)}>
+                  <MdDelete />
+                </button>
+              </div>
             </div>
           ) : (
             <div key={idx} className={css.newHolder}>
